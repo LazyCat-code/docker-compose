@@ -105,8 +105,6 @@ bin/mycat start   # 在mycat 目录下
 mysql -uroot -p -P8066 -h192.168.110.155 --default-auth=mysql_native_password
 ```
 
-- 笔记 [https://frxcat.fun/database/MySQL/MySQL_Mycat](https://frxcat.fun/database/MySQL/MySQL_Mycat)
-
 <a name="dPERU"></a>
 ## 3.垂直分库
 
@@ -565,3 +563,40 @@ insert into tb_app (id,name) values('0200001','Test300001');
 insert into tb_app (id,name) values('0200002','TesT400001');
 
 ```
+<a name="WaIN3"></a>
+## 6.MyCat监控与管理
+
+- 环境搭建
+- Zookeeper + Mycat-web
+```shell
+# 安装Mycat-web
+tar -zxvf Mycat-web.tar.gz -C /usr/local/
+
+#安装Zookeeper
+tar -zxvf zookeeper-3.4.6.tar.gz -C /usr/local/
+cd /usr/local/zookeeper-3.4.6/
+mkdir data
+cd conf
+# 重命名zoo_sample.cfg
+mv zoo_sample.cfg zoo.cfg
+# 配置数据存放目录
+sed -i 's|dataDir=.*|dataDir=/usr/local/zookeeper-3.4.6/data|g' zoo.cfg
+```
+```markdown
+bin/zkServer.sh start
+```
+```
+sh start.sh
+```
+```
+目录介绍
+etc         ----> jetty配置文件
+lib         ----> 依赖jar包
+mycat-web   ----> mycat-web项目
+readme.txt
+start.jar   ----> 启动jar
+start.sh    ----> linux启动脚本
+```
+
+- 访问地址:`[http://192.168.110.155:8082/mycat](http://192.168.200.210:8082/mycat)`
+- 如果Zookeeper与Mycat-web不在同一台服务器上 , 需要设置Zookeeper的地址 ; 在/usr/local/mycat-web/mycat-web/WEB-INF/classes/mycat.properties文件中配置 :
