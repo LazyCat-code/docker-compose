@@ -105,8 +105,6 @@ bin/mycat start   # 在mycat 目录下
 mysql -uroot -p -P8066 -h192.168.110.155 --default-auth=mysql_native_password
 ```
 
-- 笔记 [https://frxcat.fun/database/MySQL/MySQL_Mycat](https://frxcat.fun/database/MySQL/MySQL_Mycat)
-
 <a name="dPERU"></a>
 ## 3.垂直分库
 
