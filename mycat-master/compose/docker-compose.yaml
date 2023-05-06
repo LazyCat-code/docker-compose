@@ -1,0 +1,105 @@
+version: '3'
+services:
+  m1:
+    image: mysql:8.0.26
+    container_name: m1 #容器名字
+    volumes:
+      - ../config/mysql-m1/conf.d/docker.cnf:/etc/mysql/conf.d/docker.cnf:ro
+      - ../config/hosts:/etc/hosts:ro
+    ports:
+      - "3309:3306"
+    networks:
+      mysql:
+        ipv4_address: 172.25.0.2   # 添加ip用于连接
+    # 进程限制为 65535
+    ulimits:
+      nproc: 65535
+    hostname: m1
+    mem_limit: 512m   # 内存大小
+    restart: always  # 容器重启策略
+    command: 
+      - '--default-authentication-plugin=mysql_native_password'
+      - '--character-set-server=utf8mb4'
+    environment:
+      MYSQL_ROOT_PASSWORD: m123456  # 密码
+  
+  s1:
+    image: mysql:8.0.26
+    container_name: s1
+    volumes:
+      - ../config/mysql-s1/conf.d/docker.cnf:/etc/mysql/conf.d/docker.cnf:ro
+      - ../config/hosts:/etc/hosts:ro
+    ports:
+      - "3307:3306"
+    networks:
+      mysql:
+        ipv4_address: 172.25.0.3
+    links:
+      - m1
+    ulimits:
+      nproc: 65535
+    hostname: s1
+    mem_limit: 512m
+    restart: always
+    command:
+      - '--default-authentication-plugin=mysql_native_password'
+      - '--character-set-server=utf8mb4'
+    environment:
+      MYSQL_ROOT_PASSWORD: s123456
+  
+  s2:
+    image: mysql:8.0.26
+    container_name: s2
+    volumes:
+      - ../config/mysql-s2/conf.d/docker.cnf:/etc/mysql/conf.d/docker.cnf:ro
+      - ../config/hosts:/etc/hosts:ro
+    ports:
+      - "3308:3306"
+    links:
+      - m1
+    networks:
+      mysql:
+        ipv4_address: 172.25.0.4
+    ulimits:
+      nproc: 65535
+    hostname: s2
+    mem_limit: 512m
+    restart: always
+    command: 
+      - '--default-authentication-plugin=mysql_native_password'
+      - '--character-set-server=utf8mb4'
+    environment:
+      MYSQL_ROOT_PASSWORD: s123456
+  
+  mycat:
+    build: ./mycat
+    container_name: mycat
+    volumes:
+      - ../config/mycat/:/mycat/conf/:ro
+      - ../log/mycat-logs/:/mycat/logs/:rw
+      - ../config/hosts:/etc/hosts:ro
+    ports:
+      - "8066:8066"
+      - "9066:9066"
+    # 连接容器
+    links:
+      - m1
+      - s1
+      - s2
+    networks:
+      mysql:
+        ipv4_address: 172.25.0.5
+    ulimits:
+      nproc: 65535
+    hostname: mycat
+    mem_limit: 512m
+    restart: always
+
+networks:
+  mysql:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.25.0.0/24
+        gateway: 172.25.0.1
