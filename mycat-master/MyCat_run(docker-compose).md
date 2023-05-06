@@ -9,7 +9,7 @@
 
 - 项目结构
 
-1
+![项目结构](../imges/1.png)
 
 - docker-compose.yaml 文件配置
 ```yaml
@@ -348,7 +348,7 @@ docker-compose build m1 s1 s2  #在compose 目录下
 ```shell
 docker-compose up -d m1 s1 s2
 ```
-2
+![启动服务](../imges/2.png)
 
 <a name="zeJaI"></a>
 ## 3.MySQL 8.0 主从配置
@@ -375,7 +375,7 @@ FLUSH TABLES WITH READ LOCK;
 ```sql
 show master status;
 ```
-3
+![查看binlog](../imges/3.png)
 
 - 配置从库s1和s2,进入容器
 ```shell
@@ -419,7 +419,7 @@ mysql -uroot -p
 
 show databases;
 ```
-4
+![测试](../imges/4.png)
 
 <a name="fw9bp"></a>
 ## 5.启动MyCat服务
