@@ -1,0 +1,49 @@
+version: "3"
+services:
+  nginx:
+    image: nginx:1.18
+    container_name: nginx
+    ports:
+      - "88:80"
+      - "443:443"
+    # 将./nginx/nginx.conf 文件映射到容器/etc/nginx/conf.d/default.conf 文件中
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - tomcat1
+      - tomcat2
+    networks:
+      app-network:
+        ipv4_address: 172.11.0.8  # IP 地址
+
+  tomcat1:
+    image: tomcat:8.5.24
+    container_name: tomcat1
+    ports:
+      - "8088:8080"
+    # 将./tomcat1/webapp 文件映射到容器/usr/local/tomcat/webapps 文件中
+    volumes:
+      - ./tomcat1/webapp:/usr/local/tomcat/webapps
+    networks:
+      app-network:
+        ipv4_address: 172.11.0.9   # IP 地址
+  
+  tomcat2:
+    image: tomcat:8.5.24
+    container_name: tomcat2
+    ports:
+      - "8089:8080"
+    # 将./tomcat1/webapp 文件映射到容器/usr/local/tomcat/webapps 文件中
+    volumes:
+      - ./tomcat2/webapp:/usr/local/tomcat/webapps
+    networks:
+      app-network:
+        ipv4_address: 172.11.0.10   # IP 地址
+# 添加容器网络用于连接tomcat
+networks:
+  app-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.11.0.0/16   # 网段
+          gateway: 172.11.0.1    # 网关
